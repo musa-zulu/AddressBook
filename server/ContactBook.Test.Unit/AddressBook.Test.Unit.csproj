@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <None Remove="Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.5" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="nunit" Version="3.12.0" />
@@ -20,10 +26,6 @@
     <ProjectReference Include="..\ContactBook.Domain\AddressBook.Domain.csproj" />
     <ProjectReference Include="..\ContactBook.Persistence\AddressBook.Persistence.csproj" />
     <ProjectReference Include="..\ContactBook\AddressBook.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

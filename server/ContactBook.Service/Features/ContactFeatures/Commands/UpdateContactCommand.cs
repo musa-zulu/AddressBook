@@ -9,28 +9,28 @@ using System.Threading.Tasks;
 
 namespace AddressBook.Service.Features.ContactFeatures.Commands
 {
-    public class CreateContactCommand : IRequest<bool>
+    public class UpdateContactCommand : IRequest<bool>
     {
-       public ContactDto ContactDto { get; set; }
+        public ContactDto ContactDto { get; set; }
 
-        public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, bool>
+        public class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, bool>
         {
             private readonly IContactService _contactService;
             private readonly IMapper _mapper;
-            public CreateContactCommandHandler(IContactService contactService, IMapper mapper)
+            public UpdateContactCommandHandler(IContactService contactService, IMapper mapper)
             {
                 _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
                 _contactService = contactService ?? throw new ArgumentNullException(nameof(contactService));
             }
-            public async Task<bool> Handle(CreateContactCommand request, CancellationToken cancellationToken)
+            public async Task<bool> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
             {
                 var contact = _mapper.Map<Contact>(request.ContactDto);
-                var contactSaved = false;
-                if (contact != null) 
+                var contactUpdated = false;
+                if (contact != null)
                 {
-                    contactSaved = await _contactService.AddAsync(contact);
+                    contactUpdated = await _contactService.UpdateAsync(contact);
                 }
-                return contactSaved;
+                return contactUpdated;
             }
         }
     }
