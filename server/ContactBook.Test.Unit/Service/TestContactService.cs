@@ -7,7 +7,6 @@ using NSubstitute;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AddressBook.Test.Unit.Service
@@ -60,7 +59,7 @@ namespace AddressBook.Test.Unit.Service
         public async Task GetAllAsync_GivenOneContactExist_ShouldReturnListWithThatContact()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateRandomContact();
+            var contact = CreateRandomContact(1);
             await _db.Add(contact);
 
             var contactService = new ContactService(_db.DbContext);
@@ -78,8 +77,8 @@ namespace AddressBook.Test.Unit.Service
         public async Task GetAllAsync_GivenTwoContactExist_ShouldReturnAListWithTwoContact()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateRandomContact();
-            var contact2 = CreateRandomContact();
+            var contact = CreateRandomContact(2);
+            var contact2 = CreateRandomContact(3);
 
             await _db.Add(contact, contact2);
 
@@ -96,7 +95,7 @@ namespace AddressBook.Test.Unit.Service
         public async Task AddAsync_GivenAContact_ShouldAddContactToRepo()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateRandomContact();
+            var contact = CreateRandomContact(4);
             var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
@@ -113,7 +112,7 @@ namespace AddressBook.Test.Unit.Service
         public async Task AddAsync_GivenAContactWithContactDetail_ShouldAddContactDetail()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateRandomContact();
+            var contact = CreateRandomContact(5);
             var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
@@ -145,10 +144,10 @@ namespace AddressBook.Test.Unit.Service
         public async Task AddContactDetailsAsync_GivenAContactDetail_ShouldAddContactDetailToRepo()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateRandomContact();
-
-            var contactService = new ContactService(_db.DbContext);
-            await _db.Add(contact);
+            var contact = CreateRandomContact(999999999);
+            var db = new FakeContactDbContext(Guid.NewGuid().ToString());
+            var contactService = new ContactService(db.DbContext);
+            await db.Add(contact);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.AddContactDetailsAsync(contact.ContactDetails[0], contact.ContactId);
@@ -176,7 +175,7 @@ namespace AddressBook.Test.Unit.Service
         public async Task GetByIdAsync_GivenContactExistInRepo_ShouldReturnThatContact()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateRandomContact();
+            var contact = CreateRandomContact(7);
             var contactService = new ContactService(_db.DbContext);
             await _db.Add(contact);
             //---------------Assert Precondition----------------
@@ -192,9 +191,9 @@ namespace AddressBook.Test.Unit.Service
             Assert.AreEqual(results.ContactDetails[0].ContactTypeId, contact.ContactDetails[0].ContactTypeId);
         }
         
-        private static Contact CreateRandomContact()
+        private static Contact CreateRandomContact(int id)
         {
-            var contact = ContactBuilder.BuildRandom();
+            var contact = new ContactBuilder().WithId(id).WithRandomProps().Build();
             var contactDetailsBuilder = new List<ContactDetail> {
                 new ContactDetailsBuilder()
                 .WithContactId(contact.ContactId)
