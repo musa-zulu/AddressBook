@@ -92,8 +92,11 @@ namespace AddressBook.Service.Implementation
                             .FirstOrDefault(x => x.ContactId == contactDetail.ContactId &&
                             x.ContactDetailId == contactDetail.ContactDetailId);
 
-                        existingContactDetail.ContactTypeId = contactDetail.ContactTypeId;
-                        existingContactDetail.Description = contactDetail.Description;
+                        if (existingContactDetail != null)
+                        {
+                            existingContactDetail.ContactTypeId = contactDetail.ContactTypeId;
+                            existingContactDetail.Description = contactDetail.Description;
+                        }
                     }
                 }
                 _context.Contacts.Update(existingContact);
