@@ -1,7 +1,9 @@
 ﻿using AddressBook.Service.Features.ContactFeatures.Commands;
+using AddressBook.Service.Features.ContactFeatures.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading.Tasks;
 
 namespace AddressBook.Controllers
@@ -12,12 +14,14 @@ namespace AddressBook.Controllers
     public class ContactController : ControllerBase
     {
         private IMediator _mediator;
-        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
-
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateContactCommand command)
+        public IMediator Mediator
         {
-            return Ok(await Mediator.Send(command));
-        }       
+            get { return _mediator ??= HttpContext.RequestServices.GetService<IMediator>(); }
+            set
+            {
+                if (_mediator != null) throw new InvalidOperationException("Mediator is already set");
+                _mediator = value;
+            }
+        }        
     }
 }
