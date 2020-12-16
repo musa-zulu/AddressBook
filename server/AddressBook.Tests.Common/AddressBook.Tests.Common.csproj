@@ -6,11 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.5" />
+    <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="PeanutButter.RandomGenerators" Version="1.2.380" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ContactBook.Persistence\AddressBook.Persistence.csproj" />
+    <ProjectReference Include="..\ContactBook.Service\AddressBook.Service.csproj" />
+    <ProjectReference Include="..\ContactBook\AddressBook.csproj" />
   </ItemGroup>
 
 </Project>

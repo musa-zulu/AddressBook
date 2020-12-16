@@ -1,10 +1,13 @@
 ﻿using AddressBook.Controllers;
+using AddressBook.Service.Features.ContactFeatures.Commands;
+using AddressBook.Tests.Common.Builders.Command;
+using AddressBook.Tests.Common.Builders.Controller;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Reflection;
 
 namespace AddressBook.Test.Unit.Controller
 {
@@ -15,7 +18,7 @@ namespace AddressBook.Test.Unit.Controller
         public void Mediator_GivenSetMediator_ShouldSetMediatorOnFirstCall()
         {
             //---------------Set up test pack-------------------
-            var controller = CreateContactController();
+            var controller = new ContactController();
             var mediator = Substitute.For<IMediator>();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
@@ -24,12 +27,11 @@ namespace AddressBook.Test.Unit.Controller
             Assert.AreSame(mediator, controller.Mediator);
         }
 
-
         [Test]
         public void Mediator_GivenSetMediatorIsSet_ShouldThrowOnCall()
         {
             //---------------Set up test pack-------------------
-            var controller = CreateContactController();
+            var controller = new ContactController();
             var mediator = Substitute.For<IMediator>();
             var mediator1 = Substitute.For<IMediator>();
             controller.Mediator = mediator;
@@ -40,9 +42,53 @@ namespace AddressBook.Test.Unit.Controller
             Assert.AreEqual("Mediator is already set", ex.Message);
         }
 
-        private ContactController CreateContactController()
+        [Test]
+        public void Create_ShouldHaveHttpPostAttribute()
         {
-            return new ContactController();
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(ContactController)
+                .GetMethod("Create", new[] { typeof(CreateContactCommand) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var httpPostAttribute = methodInfo.GetCustomAttribute<HttpPostAttribute>();
+            //---------------Test Result -----------------------
+            Assert.NotNull(httpPostAttribute);
+        }
+
+        [Test]
+        public void Create_ShouldReturnIActionResult()
+        {
+            //---------------Set up test pack-------------------
+            var command = CreateContactCommandBuilder.BuildRandom();
+            var controller = CreateContactControllerBuilder().Build();
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var result = controller.Create(command);
+            //---------------Test Result -----------------------            
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void Create_ShouldCallCreateContactCommand()
+        {
+            //---------------Set up test pack-------------------
+            var mediator = Substitute.For<IMediator>();
+            var command = CreateContactCommandBuilder.BuildRandom();
+
+            var controller = CreateContactControllerBuilder()
+                .WithMediator(mediator)
+                .Build();
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            _ = controller.Create(command);
+            //---------------Test Result -----------------------
+            mediator.Received(1).Send(command);
+        }
+
+        private ContactControllerBuilder CreateContactControllerBuilder()
+        {
+            return new ContactControllerBuilder();
         }
     }
 }

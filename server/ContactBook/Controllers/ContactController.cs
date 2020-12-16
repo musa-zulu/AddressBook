@@ -22,6 +22,12 @@ namespace AddressBook.Controllers
                 if (_mediator != null) throw new InvalidOperationException("Mediator is already set");
                 _mediator = value;
             }
-        }        
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateContactCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+        }
     }
 }
