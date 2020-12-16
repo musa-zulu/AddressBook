@@ -10,10 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\ContactFeatures\Queries\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ContactBook.Persistence\AddressBook.Persistence.csproj" />
   </ItemGroup>
 

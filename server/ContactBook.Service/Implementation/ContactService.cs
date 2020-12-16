@@ -4,6 +4,7 @@ using AddressBook.Service.Contract;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AddressBook.Service.Implementation
@@ -28,13 +29,16 @@ namespace AddressBook.Service.Implementation
 
         private void AddContactDetailsFor(List<ContactDetail> contactDetails)
         {
-            foreach (var contactDetail in contactDetails)
+            if (contactDetails != null && contactDetails.Count > 0)
             {
-                int contactDetailId = GetLastContactDetailId() + 1;
-                var contactId = _context.Contacts.ToListAsync().Result.Count + 1;
-                contactDetail.ContactDetailId = contactDetailId;
-                contactDetail.ContactId = contactId;
-                _context.ContactDetail.Add(contactDetail);
+                foreach (var contactDetail in contactDetails)
+                {
+                    int contactDetailId = GetLastContactDetailId() + 1;
+                    var contactId = _context.Contacts.ToListAsync().Result.Count + 1;
+                    contactDetail.ContactDetailId = contactDetailId;
+                    contactDetail.ContactId = contactId;
+                    _context.ContactDetail.Add(contactDetail);
+                }
             }
         }
 
@@ -71,7 +75,29 @@ namespace AddressBook.Service.Implementation
 
         public async Task<bool> UpdateAsync(Contact contact)
         {
-            _context.Contacts.Update(contact);
+            var existingContact = await GetByIdAsync(contact.ContactId);
+
+            if (existingContact != null)
+            {
+                existingContact.BirthDate = contact.BirthDate;
+                existingContact.FirstName = contact.FirstName;
+                existingContact.Surname = contact.Surname;
+                existingContact.UpdatedDate = DateTime.Now;
+
+                if (contact?.ContactDetails != null && contact?.ContactDetails.Count > 0)
+                {
+                    foreach (var contactDetail in contact.ContactDetails)
+                    {
+                        var existingContactDetail = existingContact.ContactDetails
+                            .FirstOrDefault(x => x.ContactId == contactDetail.ContactId &&
+                            x.ContactDetailId == contactDetail.ContactDetailId);
+
+                        existingContactDetail.ContactTypeId = contactDetail.ContactTypeId;
+                        existingContactDetail.Description = contactDetail.Description;
+                    }
+                }
+                _context.Contacts.Update(existingContact);
+            }
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -88,7 +114,7 @@ namespace AddressBook.Service.Implementation
         private void DeleteContactDetailsFrom(Contact contact)
         {
             var contactDetails = contact?.ContactDetails;
-            if (contactDetails != null)
+            if (contactDetails != null && contactDetails.Count > 0)
             {
                 foreach (var contactDetail in contactDetails)
                     _context.ContactDetail.Remove(contactDetail);

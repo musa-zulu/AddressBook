@@ -6,6 +6,8 @@ using AddressBook.Tests.Common.Helpers;
 using NSubstitute;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AddressBook.Test.Unit.Service
@@ -13,6 +15,13 @@ namespace AddressBook.Test.Unit.Service
     [TestFixture]
     public class TestContactService
     {
+        private FakeContactDbContext _db;
+        [SetUp]
+        public void SetUp()
+        {
+            _db = new FakeContactDbContext(Guid.NewGuid().ToString());
+        }
+
         [Test]
         public void Contruct()
         {
@@ -37,9 +46,8 @@ namespace AddressBook.Test.Unit.Service
         [Test]
         public async Task GetAllAsync_GivenNoContactExist_ShouldReturnEmptyList()
         {
-            //---------------Set up test pack-------------------
-            var db = new FakeContactDbContext("GetAllContactsZero");
-            var contactService = new ContactService(db.DbContext);
+            //---------------Set up test pack-------------------            
+            var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.GetAllAsync();
@@ -52,12 +60,10 @@ namespace AddressBook.Test.Unit.Service
         public async Task GetAllAsync_GivenOneContactExist_ShouldReturnListWithThatContact()
         {
             //---------------Set up test pack-------------------
-            var contact = ContactBuilder.BuildRandom();
-            var db = new FakeContactDbContext("GetAllContactsOne");
+            var contact = CreateRandomContact();
+            await _db.Add(contact);
 
-            await db.Add(contact);
-
-            var contactService = new ContactService(db.DbContext);
+            var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.GetAllAsync();
@@ -72,14 +78,12 @@ namespace AddressBook.Test.Unit.Service
         public async Task GetAllAsync_GivenTwoContactExist_ShouldReturnAListWithTwoContact()
         {
             //---------------Set up test pack-------------------
-            var contact = ContactBuilder.BuildRandom();
-            var contact2 = ContactBuilder.BuildRandom();
+            var contact = CreateRandomContact();
+            var contact2 = CreateRandomContact();
 
-            var db = new FakeContactDbContext("GetAllContactsTwo");
+            await _db.Add(contact, contact2);
 
-            await db.Add(contact, contact2);
-
-            var contactService = new ContactService(db.DbContext);
+            var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.GetAllAsync();
@@ -92,10 +96,8 @@ namespace AddressBook.Test.Unit.Service
         public async Task AddAsync_GivenAContact_ShouldAddContactToRepo()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateFakeContact();
-            var db = new FakeContactDbContext("AddContactToRepo");
-
-            var contactService = new ContactService(db.DbContext);
+            var contact = CreateRandomContact();
+            var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.AddAsync(contact);
@@ -106,15 +108,13 @@ namespace AddressBook.Test.Unit.Service
             Assert.AreEqual(contactFromRepo.FirstName, contact.FirstName);
             Assert.AreEqual(contactFromRepo.ContactDetails.Count, contact.ContactDetails.Count);
         }
-
+      
         [Test]
         public async Task AddAsync_GivenAContactWithContactDetail_ShouldAddContactDetail()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateFakeContact();
-            var db = new FakeContactDbContext("AddContactOne");
-
-            var contactService = new ContactService(db.DbContext);
+            var contact = CreateRandomContact();
+            var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.AddAsync(contact);
@@ -132,7 +132,6 @@ namespace AddressBook.Test.Unit.Service
         {
             //---------------Set up test pack-------------------
             var contact = ContactBuilder.BuildRandom();
-            
             var dbContext = Substitute.For<IApplicationDbContext>();
             var contactService = new ContactService(dbContext);
             //---------------Assert Precondition----------------
@@ -141,23 +140,22 @@ namespace AddressBook.Test.Unit.Service
             //---------------Test Result -----------------------            
             await dbContext.Received(1).SaveChangesAsync();
         }
-
+      
         [Test]
         public async Task AddContactDetailsAsync_GivenAContactDetail_ShouldAddContactDetailToRepo()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateFakeContact();
-            var db = new FakeContactDbContext("AddContactDetailToRepo");
+            var contact = CreateRandomContact();
 
-            var contactService = new ContactService(db.DbContext);            
-            await db.Add(contact);
+            var contactService = new ContactService(_db.DbContext);
+            await _db.Add(contact);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.AddContactDetailsAsync(contact.ContactDetails[0], contact.ContactId);
             //---------------Test Result -----------------------
             var contactFromRepo = await contactService.GetByIdAsync(contact.ContactId);
             Assert.IsTrue(results);
-            Assert.AreEqual(contactFromRepo.ContactDetails[0].ContactId, contact.ContactId);            
+            Assert.AreEqual(contactFromRepo.ContactDetails[0].ContactId, contact.ContactId);
             Assert.AreEqual(contactFromRepo.ContactDetails[0].Description, contact.ContactDetails[0].Description);
             Assert.AreEqual(contactFromRepo.ContactDetails[0].ContactTypeId, contact.ContactDetails[0].ContactTypeId);
         }
@@ -166,26 +164,21 @@ namespace AddressBook.Test.Unit.Service
         public async Task GetByIdAsync_GivenNoContactExist_ShouldReturnNull()
         {
             //---------------Set up test pack-------------------            
-            var db = new FakeContactDbContext("AddContactOne");
-
-            var contactService = new ContactService(db.DbContext);
+            var contactService = new ContactService(_db.DbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.GetByIdAsync(1);
-            //---------------Test Result -----------------------                        
-            Assert.IsNull(results);            
+            //---------------Test Result -----------------------
+            Assert.IsNull(results);
         }
-
 
         [Test]
         public async Task GetByIdAsync_GivenContactExistInRepo_ShouldReturnThatContact()
         {
             //---------------Set up test pack-------------------
-            var contact = CreateFakeContact();
-            var db = new FakeContactDbContext("AddContactDetailToRepo");
-
-            var contactService = new ContactService(db.DbContext);
-            await db.Add(contact);
+            var contact = CreateRandomContact();
+            var contactService = new ContactService(_db.DbContext);
+            await _db.Add(contact);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var results = await contactService.GetByIdAsync(contact.ContactId);
@@ -199,23 +192,18 @@ namespace AddressBook.Test.Unit.Service
             Assert.AreEqual(results.ContactDetails[0].ContactTypeId, contact.ContactDetails[0].ContactTypeId);
         }
         
-        private static Contact CreateFakeContact()
+        private static Contact CreateRandomContact()
         {
-            return new Contact
-            {
-                ContactId = 1,
-                FirstName = "musa",
-                ContactDetails = new System.Collections.Generic.List<ContactDetail>
-                {
-                    new ContactDetail
-                    {
-                        ContactId = 1,
-                        ContactTypeId = ContactType.Address,
-                        ContactDetailId = 0,
-                        Description = "address"
-                    }
-                }
+            var contact = ContactBuilder.BuildRandom();
+            var contactDetailsBuilder = new List<ContactDetail> {
+                new ContactDetailsBuilder()
+                .WithContactId(contact.ContactId)
+                .WithRandomProps()
+                .Build()
             };
+            contact.ContactDetails = contactDetailsBuilder;
+
+            return contact;
         }
     }
 }
