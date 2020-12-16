@@ -22,3 +22,7 @@ server/OpenCover/
 server/.vs/AddressBook/config/applicationhost.config
 
 server/.vs/AddressBook/DesignTimeBuild/.dtbcache.v2
+
+server/.vs/AddressBook/v16/TestStore/0/005.testlog
+
+*.manifest

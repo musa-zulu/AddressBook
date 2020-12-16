@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AddressBook.Service.Features.ContactFeatures.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
@@ -13,6 +14,10 @@ namespace AddressBook.Controllers
         private IMediator _mediator;
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
-        
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateContactCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+        }       
     }
 }

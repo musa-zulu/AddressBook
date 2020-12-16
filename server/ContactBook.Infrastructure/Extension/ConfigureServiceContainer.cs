@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Reflection;
+using AddressBook.Service.Implementation;
+using AddressBook.Service.Contract;
 
 namespace AddressBook.Infrastructure.Extension
 {
@@ -34,6 +36,7 @@ namespace AddressBook.Infrastructure.Extension
         public static void AddAddScopedServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
+            serviceCollection.AddScoped<IContactService, ContactService>();
         }
 
         public static void AddSwaggerOpenAPI(this IServiceCollection serviceCollection)

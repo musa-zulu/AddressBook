@@ -1,12 +1,13 @@
-﻿using System;
+﻿using AddressBook.Domain.Entities;
+using System;
 using System.Collections.Generic;
-using AddressBook.Domain.Entities;
 
-namespace AddressBook.Infrastructure.ViewModel
+namespace AddressBook.Domain.Dtos
 {
-    public class ContactModel
+    public class ContactDto
     {
         public int ContactId { get; set; }
+
         public string FirstName { get; set; }
         public string Surname { get; set; }
         public DateTime BirthDate { get; set; }

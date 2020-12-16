@@ -17,10 +17,11 @@ namespace AddressBook.Persistence
         }
 
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<ContactDetail> ContactDetail { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ContactDetail>().HasKey(o => new { o.ContactId, o.ContactDetailId });
+            modelBuilder.Entity<ContactDetail>().HasKey(o => new { o.ContactId, o.ContactDetailId });                       
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

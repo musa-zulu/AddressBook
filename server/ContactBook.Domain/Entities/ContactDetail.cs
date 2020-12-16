@@ -6,7 +6,6 @@
         public string Description { get; set; }
         public ContactType ContactTypeId { get; set; }
 
-        public int ContactId { get; set; }
-        public Contact Contact { get; set; }
+        public int ContactId { get; set; }        
     }
 }

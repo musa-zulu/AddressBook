@@ -7,6 +7,7 @@ namespace AddressBook.Test.Integration
 {
     public class TestApiContact
     {
+        [Ignore("")]
         [TestCase("Get", "api/Contact")]
         [TestCase("Get", "api/Contact/1")]
         public async Task GetAllCContactTestAsync(string method, string URL)
