@@ -28,3 +28,11 @@ server/.vs/AddressBook/v16/TestStore/0/005.testlog
 *.manifest
 
 *.testlog
+
+Capture.PNG
+
+client/.browserslistrc
+
+client/.editorconfig
+
+client/node_modules/
