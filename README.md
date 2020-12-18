@@ -24,10 +24,8 @@
 * [Getting Started](#getting-started)
 * [Features available in this project](#Features-available-in-this-project)
 * [Project description](#project-description)
-* [Design patterns Used](#roadmap)
 * [Licence Used](#Licence-Used)
 * [Contact](#contact)
-* [Support This Project](#Support-This-Project)
 <!-- * [Acknowledgements](#acknowledgements) -->
 
 ## Onion Architecture
@@ -68,7 +66,7 @@ Plese run the script file "InitialScript" under documents\scripts to create your
 
 Swagger UI
 
-![image](documents/images/swagger.png)
+![image](documents/images/swagger-img.PNG)
 
 ## Features available in this project
 
