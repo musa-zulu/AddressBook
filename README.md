@@ -19,12 +19,12 @@
 
 * [Onion Architecture](#Onion-Architecture)
   * [reference](#reference)
-* [About the Project](#about-the-project)
+* [About the project](#about-the-project)
   <!-- * [Built With](#built-with) -->
-* [Getting Started](#getting-started)
-* [Features available in this project](#Features-available-in-this-project)
+* [Getting started](#getting-started)
+* [Features available in this project](#features-available-in-this-project)
 * [Project description](#project-description)
-* [Licence Used](#Licence-Used)
+* [License used](#license-used)
 * [Contact](#contact)
 <!-- * [Acknowledgements](#acknowledgements) -->
 
@@ -48,7 +48,7 @@ Domain in center and building layer top of it. You can call it as Domain-centric
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-AddressBook API solution template which is built on Onion Architecture with all essential feature using .NET Core.
+AddressBook API solution is built on Onion Architecture with all essential feature using .NET Core.
 
 ![image](documents/images/OnionArchitecture.png)
 
@@ -113,7 +113,7 @@ we can see that all the Layers are dependent only on the Core Layers
   </p>
 </details>
 
-## Licence Used
+## License Used
 [![MIT License][license-shield]][license-url]
 
 See the contents of the LICENSE file for details
