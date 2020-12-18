@@ -9,7 +9,7 @@
     AddressBook API solution is built on Onion Architecture with all essential feature using .NET Core!
   
   <br/>
-      Trello board for user stories can be found here: https://trello.com/b/lfxCA8eK/address-book
+      Trello board for user stories can be found here: https://trello.com/b/pHCmBh1R/addressbook
     <br />  
   </p>
 </p>
