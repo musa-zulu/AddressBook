@@ -36,3 +36,5 @@ client/.browserslistrc
 client/.editorconfig
 
 client/node_modules/
+
+client/.eslintcache
