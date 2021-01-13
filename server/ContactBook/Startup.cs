@@ -63,6 +63,9 @@ namespace ContactBook
 
             log.AddSerilog();
 
+            app.UseCors(options =>
+               options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             RunMigrations(service);
 
             app.UseEndpoints(endpoints =>
